@@ -19,7 +19,9 @@ class CodingAgent:
     Un semplice agente di codifica che può analizzare e generare codice.
     """
     
-    MAX_LINE_LENGTH = 100  # Maximum recommended line length
+    # Maximum recommended line length for readability
+    # Used in code analysis to identify overly long lines
+    MAX_LINE_LENGTH = 100
     
     def __init__(self, name: str = "CodingAgent"):
         self.name = name
@@ -98,8 +100,9 @@ class CodingAgent:
         if long_lines:
             examples = long_lines[:3]
             line_info = ", ".join([f"{line}({length})" for line, length in examples])
-            suggestions.append(f"Alcune righe sono molto lunghe (>{self.MAX_LINE_LENGTH} caratteri): {line_info} / "
-                             f"Some lines are very long (>{self.MAX_LINE_LENGTH} chars): {line_info}")
+            msg_it = f"Alcune righe sono molto lunghe (>{self.MAX_LINE_LENGTH} caratteri): {line_info}"
+            msg_en = f"Some lines are very long (>{self.MAX_LINE_LENGTH} chars): {line_info}"
+            suggestions.append(f"{msg_it} / {msg_en}")
         
         # Check for empty file
         if len(content.strip()) == 0:
