@@ -19,10 +19,11 @@ class CodingAgent:
     Un semplice agente di codifica che può analizzare e generare codice.
     """
     
+    MAX_LINE_LENGTH = 100  # Maximum recommended line length
+    
     def __init__(self, name: str = "CodingAgent"):
         self.name = name
         self.supported_languages = ["python", "javascript", "java", "cpp"]
-        self.MAX_LINE_LENGTH = 100  # Maximum recommended line length
         
     def analyze_file(self, filepath: str) -> Dict[str, Any]:
         """
@@ -59,10 +60,13 @@ class CodingAgent:
     def _has_comments(self, content: str) -> bool:
         """Check if code has comments."""
         # Simple check for common comment patterns
-        patterns = [r'#.*', r'//.*', r'/\*[\s\S]*?\*/']
-        for pattern in patterns:
-            if re.search(pattern, content):
-                return True
+        # Using separate checks for better reliability
+        if re.search(r'#.*', content):  # Python, Shell
+            return True
+        if re.search(r'//.*', content):  # C, C++, Java, JavaScript
+            return True
+        if re.search(r'/\*', content) and re.search(r'\*/', content):  # Block comments
+            return True
         return False
     
     def _count_functions(self, content: str) -> int:
@@ -90,10 +94,12 @@ class CodingAgent:
         
         # Check for very long lines
         lines = content.split('\n')
-        long_lines = [i + 1 for i, line in enumerate(lines) if len(line) > self.MAX_LINE_LENGTH]
+        long_lines = [(i + 1, len(line)) for i, line in enumerate(lines) if len(line) > self.MAX_LINE_LENGTH]
         if long_lines:
-            suggestions.append(f"Alcune righe sono molto lunghe (>{self.MAX_LINE_LENGTH} caratteri): righe {long_lines[:3]} / "
-                             f"Some lines are very long (>{self.MAX_LINE_LENGTH} chars): lines {long_lines[:3]}")
+            examples = long_lines[:3]
+            line_info = ", ".join([f"{line}({length})" for line, length in examples])
+            suggestions.append(f"Alcune righe sono molto lunghe (>{self.MAX_LINE_LENGTH} caratteri): {line_info} / "
+                             f"Some lines are very long (>{self.MAX_LINE_LENGTH} chars): {line_info}")
         
         # Check for empty file
         if len(content.strip()) == 0:
@@ -105,6 +111,25 @@ class CodingAgent:
                 suggestions.append("Considera l'aggiunta di docstrings / Consider adding docstrings to functions and classes")
         
         return suggestions if suggestions else ["Il codice sembra buono! / Code looks good!"]
+    
+    def get_comment_header(self, language: str, text: str) -> str:
+        """
+        Get a properly formatted comment header for a given language.
+        Ottiene un'intestazione di commento formattata correttamente per un dato linguaggio.
+        
+        Args:
+            language: Programming language (python, javascript, java, cpp)
+            text: Text to include in the comment
+            
+        Returns:
+            Formatted comment string
+        """
+        if language.lower() == "python":
+            lines = text.split('\n')
+            return '\n'.join([f"# {line}" for line in lines]) + '\n'
+        else:
+            lines = text.split('\n')
+            return '\n'.join([f"// {line}" for line in lines]) + '\n'
     
     def generate_code(self, description: str, language: str = "python") -> str:
         """
