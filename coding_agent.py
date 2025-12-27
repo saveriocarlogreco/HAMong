@@ -22,6 +22,7 @@ class CodingAgent:
     def __init__(self, name: str = "CodingAgent"):
         self.name = name
         self.supported_languages = ["python", "javascript", "java", "cpp"]
+        self.MAX_LINE_LENGTH = 100  # Maximum recommended line length
         
     def analyze_file(self, filepath: str) -> Dict[str, Any]:
         """
@@ -37,8 +38,11 @@ class CodingAgent:
         if not os.path.exists(filepath):
             return {"error": f"File not found: {filepath}"}
         
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except (IOError, PermissionError, UnicodeDecodeError) as e:
+            return {"error": f"Error reading file: {str(e)}"}
         
         lines = content.split('\n')
         analysis = {
@@ -55,7 +59,7 @@ class CodingAgent:
     def _has_comments(self, content: str) -> bool:
         """Check if code has comments."""
         # Simple check for common comment patterns
-        patterns = [r'#.*', r'//.*', r'/\*.*\*/']
+        patterns = [r'#.*', r'//.*', r'/\*[\s\S]*?\*/']
         for pattern in patterns:
             if re.search(pattern, content):
                 return True
@@ -86,10 +90,10 @@ class CodingAgent:
         
         # Check for very long lines
         lines = content.split('\n')
-        long_lines = [i + 1 for i, line in enumerate(lines) if len(line) > 100]
+        long_lines = [i + 1 for i, line in enumerate(lines) if len(line) > self.MAX_LINE_LENGTH]
         if long_lines:
-            suggestions.append(f"Alcune righe sono molto lunghe (>{100} caratteri): righe {long_lines[:3]} / "
-                             f"Some lines are very long (>{100} chars): lines {long_lines[:3]}")
+            suggestions.append(f"Alcune righe sono molto lunghe (>{self.MAX_LINE_LENGTH} caratteri): righe {long_lines[:3]} / "
+                             f"Some lines are very long (>{self.MAX_LINE_LENGTH} chars): lines {long_lines[:3]}")
         
         # Check for empty file
         if len(content.strip()) == 0:
