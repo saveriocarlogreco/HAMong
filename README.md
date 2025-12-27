@@ -39,6 +39,9 @@ python coding_agent.py
 
 # Eseguire la demo completa
 python example_usage.py
+
+# Eseguire la demo interattiva (crea file di esempio)
+python interactive_demo.py
 ```
 
 ### Esempio di codice
@@ -98,6 +101,9 @@ python coding_agent.py
 
 # Run the full demo
 python example_usage.py
+
+# Run the interactive demo (creates sample files)
+python interactive_demo.py
 ```
 
 ### Code example
@@ -137,6 +143,18 @@ python coding_agent.py
 
 # Or run the full demo / O esegui la demo completa
 python example_usage.py
+```
+
+## 📁 Project Structure / Struttura del Progetto
+
+```
+HAMong/
+├── coding_agent.py       # Main agent implementation / Implementazione principale
+├── example_usage.py      # Basic usage demo / Demo utilizzo base
+├── interactive_demo.py   # Interactive demo with file generation / Demo interattiva
+├── requirements.txt      # Python dependencies / Dipendenze Python
+├── .gitignore           # Git ignore rules / Regole Git ignore
+└── README.md            # This file / Questo file
 ```
 
 ## 📝 What is a Coding Agent? / Cos'è un Coding Agent?

@@ -1,0 +1,6 @@
+# HAMong Coding Agent Requirements
+# This project has no external dependencies - it uses only Python standard library
+# Requisiti - Questo progetto non ha dipendenze esterne - usa solo la libreria standard Python
+
+# Python version required / Versione Python richiesta
+# python>=3.6
